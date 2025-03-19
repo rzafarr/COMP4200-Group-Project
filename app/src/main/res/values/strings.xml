@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">habits</string>
+        <string name="archived">Archived</string>
+        <string name="completed">Completed</string>
+        <string name="add_task">Add a new task</string>
+        <string name="archived_desc">View archived tasks</string>
+        <string name="completed_desc">View completed tasks</string>
+    <string name="addtask">Add Task</string>
+</resources>
