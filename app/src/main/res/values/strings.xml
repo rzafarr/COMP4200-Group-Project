@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">habits</string>
+    <string name="chip_text">My Chip</string>
+    <string name="chip_archived">Archived</string>
+    <string name="chip_completed">Completed</string>
+    <string name="fab_add_task">Add a new task</string>
+    <string name="all_tasks">All Tasks</string>
+
+
+</resources>
