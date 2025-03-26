@@ -21,9 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -73,7 +78,27 @@ public class HabitListFragment extends Fragment {
         // initialize fab
         ExtendedFloatingActionButton fab = view.findViewById(R.id.addFab);
         fab.setOnClickListener(fabView -> {
-            showAddTaskDialog(dbHelper);
+            //showAddTaskDialog(dbHelper);
+            // navigate to edit habit fragment
+
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.navigate(R.id.action_habitListFragment_to_habitEditFragment);
+        });
+
+        // initialize bottom sheet
+        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.standard_bottom_sheet));
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // initialize top bar
+        MaterialToolbar topAppBar = view.findViewById(R.id.toolbar);
+        topAppBar.setOnMenuItemClickListener(item -> {
+            switch (item.getTitle().toString()) {
+                case "Filters":
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    return true;
+                default:
+                    return false;
+            }
         });
 
         updateTaskList(dbHelper, 0);

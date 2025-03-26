@@ -5,10 +5,4 @@
         android:icon="@drawable/filter_outline"
         android:title="Filters"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/more"
-        android:title="More"
-        app:showAsAction="never" />
-
 </menu>

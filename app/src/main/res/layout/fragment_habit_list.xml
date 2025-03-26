@@ -24,8 +24,7 @@
                 android:elevation="0dp"
                 app:layout_collapseMode="pin"
                 app:menu="@menu/top_app_bar"
-                app:title="Habits">
-            </com.google.android.material.appbar.MaterialToolbar>
+                app:title="Habits"></com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -34,7 +33,6 @@
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -51,42 +49,71 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:icon="@drawable/add"
-        android:text="Add habit"/>
-
-    <!--    <com.google.android.material.chip.ChipGroup-->
-    <!--        android:id="@+id/chip_group"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        tools:layout_editor_absoluteY="8dp">-->
-
-    <!--    </com.google.android.material.chip.ChipGroup>-->
+        android:text="Add habit"
+        app:icon="@drawable/add" />
 
 
-    <!--    <com.google.android.material.chip.Chip-->
-    <!--        android:id="@+id/chip"-->
-    <!--        style="@style/Widget.Material3.Chip.Filter"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginStart="16dp"-->
-    <!--        android:text="@string/chip_archived"-->
-    <!--        app:chipIcon="@drawable/archive_outline"-->
-    <!--        app:chipIconVisible="true"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/navigation"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
+    <FrameLayout
+        android:id="@+id/standard_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+        <!-- Drag handle for accessibility -->
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <!--    <com.google.android.material.chip.Chip-->
-    <!--        android:id="@+id/chip2"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginStart="16dp"-->
-    <!--        android:checkable="true"-->
-    <!--        android:text="@string/chip_completed"-->
-    <!--        app:checkedIconVisible="false"-->
-    <!--        app:chipIconVisible="true"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/chip"-->
-    <!--        app:layout_constraintStart_toEndOf="@id/chip" />-->
+        <!-- Bottom sheet contents. -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                style="?attr/textAppearanceTitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:text="Filters"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/archivedChip"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:text="@string/chip_archived"
+                app:checkedIconVisible="false"
+                app:chipIcon="@drawable/archive_outline"
+                app:chipIconVisible="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/completedChip"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:checkable="true"
+                android:text="@string/chip_completed"
+                app:checkedIconVisible="false"
+                app:chipIcon="@drawable/check_circle_outline"
+                app:chipIconVisible="true"
+                app:layout_constraintBottom_toBottomOf="@+id/archivedChip"
+                app:layout_constraintStart_toEndOf="@id/archivedChip" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

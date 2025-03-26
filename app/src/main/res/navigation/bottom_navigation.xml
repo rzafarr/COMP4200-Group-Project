@@ -9,7 +9,15 @@
         android:id="@+id/habitListFragment"
         android:name="com.example.habits.HabitListFragment"
         android:label="fragment_habit_list"
-        tools:layout="@layout/fragment_habit_list" />
+        tools:layout="@layout/fragment_habit_list" >
+        <action
+            android:id="@+id/action_habitListFragment_to_habitEditFragment"
+            app:destination="@id/habitEditFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_habitListFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
     <activity
         android:id="@+id/mainActivity"
         android:name="com.example.habits.MainActivity"
@@ -19,5 +27,17 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.habits.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_habitListFragment"
+            app:destination="@id/habitListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/habitEditFragment"
+        android:name="com.example.habits.HabitEditFragment"
+        android:label="HabitEditFragment" >
+        <action
+            android:id="@+id/action_habitEditFragment_to_habitListFragment"
+            app:destination="@id/habitListFragment" />
+    </fragment>
 </navigation>

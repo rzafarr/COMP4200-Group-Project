@@ -44,21 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // handle insets
-//        ViewCompat.setOnApplyWindowInsetsListener(this.findViewById(R.id.main), (v, windowInsets) -> {
-//            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-//
-//            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-//            mlp.leftMargin = insets.left;
-//            mlp.rightMargin = insets.right;
-//            mlp.bottomMargin = insets.bottom;
-//            mlp.topMargin = insets.top;
-//
-//            v.setLayoutParams(mlp);
-//
-//            return WindowInsetsCompat.CONSUMED;
-//        });
-
         // set up navigation
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavController navController = navHostFragment.getNavController();

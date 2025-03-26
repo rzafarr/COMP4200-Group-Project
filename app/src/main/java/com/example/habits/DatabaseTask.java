@@ -48,7 +48,6 @@ public class DatabaseTask extends SQLiteOpenHelper{
         return db.rawQuery("SELECT * FROM tasks WHERE status = 0", null);
     }
 
-
     public Cursor getCompletedTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM tasks WHERE status = 1", null);
@@ -58,7 +57,6 @@ public class DatabaseTask extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM tasks WHERE status = 2", null);
     }
-
 
     public void updateTaskStatus(int taskId, int status) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -74,7 +72,6 @@ public class DatabaseTask extends SQLiteOpenHelper{
         db.close();
     }
 
-
     public void updateTask(int id, String name, String deadline) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -84,10 +81,4 @@ public class DatabaseTask extends SQLiteOpenHelper{
         db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
         db.close();
     }
-
-
-
-
-
-
 }
