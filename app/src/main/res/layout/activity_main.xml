@@ -16,7 +16,7 @@
         android:fontFamily="@font/montserratalternates_bold"
         android:gravity="center"
         android:padding="16dp"
-        android:text="HABITS - Track your daily tasks and stay motivated!"
+        android:text="📝 HABITS - Track your daily tasks and stay motivated!"
         android:textColor="#511F71"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -25,15 +25,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textMenuTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="#5F2D81"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="📋 MENU"
+        android:textAlignment="center"
+        android:textColor="#DBCBE7"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appHeader" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/appHeader"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textMenuTitle"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" >
-
     </com.google.android.material.chip.ChipGroup>
 
 
@@ -42,25 +59,24 @@
         style="@style/Widget.Material3.Chip.Filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/chip_archived"
         app:chipIcon="@drawable/outline_archive_24"
         app:chipIconVisible="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <com.google.android.material.chip.Chip
         android:id="@+id/chip2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="12dp"
         android:layout_marginBottom="32dp"
-        android:text="@string/chip_completed"
-        app:chipIconVisible="true"
         android:checkable="true"
+        android:text="@string/chip_completed"
         app:checkedIconVisible="false"
+        app:chipIconVisible="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/chip" />
 
@@ -69,22 +85,62 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="68dp"
         android:contentDescription="@string/fab_add_task"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add" />
 
+    <TextView
+        android:id="@+id/progressLabel"
+        android:layout_width="191dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text=" 📊 Today's Progress"
+        android:textColor="#511F71"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appHeader" />
+
+    <ProgressBar
+        android:id="@+id/progressBarTasks"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="98dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="28dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="#8D5DB5"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appHeader" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
-        android:layout_width="415dp"
-        android:layout_height="529dp"
+        android:layout_width="369dp"
+        android:layout_height="526dp"
         android:paddingTop="16dp"
         app:layout_constraintBottom_toTopOf="@id/floatingActionButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chip_group"
-        app:layout_constraintVertical_bias="0.877" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipTrash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="16dp"
+        android:checkable="true"
+        android:text="🗑️ Trash"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chip2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

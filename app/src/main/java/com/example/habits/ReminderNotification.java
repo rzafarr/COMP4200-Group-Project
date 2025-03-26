@@ -26,13 +26,13 @@ public class ReminderNotification extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "task_reminder")
                 .setContentTitle("Task Reminder")
-                .setContentText("Don't forget to complete: " + taskName)
+                .setContentText("REMINDER - Don't Forget to Complete: " + taskName)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
-        Log.d("ReminderReceiver", "Notification triggered for: " + taskName);
+        //Log.d("ReminderReceiver", "Notification Triggered: " + taskName);
 
     }
 }
