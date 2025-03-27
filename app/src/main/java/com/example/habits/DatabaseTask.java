@@ -17,21 +17,21 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "Creating database...");
+       // Log.d(TAG, "Creating database...");
         db.execSQL("CREATE TABLE tasks ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "name TEXT NOT NULL, "
                 + "deadline TEXT, "
                 + "status INTEGER NOT NULL DEFAULT 0);");
-        Log.d(TAG, "Database created successfully.");
+       // Log.d(TAG, "Database created successfully.");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "Upgrading database...");
+      //  Log.d(TAG, "Upgrading database...");
         db.execSQL("DROP TABLE IF EXISTS tasks");
         onCreate(db);
-        Log.d(TAG, "Database upgraded.");
+      //  Log.d(TAG, "Database upgraded.");
     }
 
     public void addTask(String name, String deadline) {
@@ -45,12 +45,12 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     public Cursor getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE status = 0", null);
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
     }
 
     public Cursor getCompletedTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE status = 1", null);
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 2", null);
     }
 
     public Cursor getArchivedTasks() {
@@ -68,7 +68,7 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     public void deleteTask(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("tasks", "id=?", new String[]{String.valueOf(id)});
+        db.delete("tasks", "_id=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -78,7 +78,12 @@ public class DatabaseTask extends SQLiteOpenHelper{
         values.put("name", name);
         values.put("deadline", deadline);
 
-        db.update("tasks", values, "id=?", new String[]{String.valueOf(id)});
+        db.update("tasks", values, "_id=?", new String[]{String.valueOf(id)});
         db.close();
+    }
+
+    public Cursor getTrashedTasks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 3", null);
     }
 }
