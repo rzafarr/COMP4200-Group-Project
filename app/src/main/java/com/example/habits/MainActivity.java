@@ -1,5 +1,7 @@
 package com.example.habits;
 
+import static android.text.format.DateUtils.isToday;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -9,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.core.net.ParseException;
@@ -37,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -118,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("FILTER", "Showing completed tasks");
 
         Cursor cursor = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
-        while (cursor.moveToNext()) {
-            //Log.d("Task", "ID: " + cursor.getInt(0) + " Name: " + cursor.getString(1));
-        }
+//        while (cursor.moveToNext()) {
+//            //Log.d("Task", "ID: " + cursor.getInt(0) + " Name: " + cursor.getString(1));
+//        }
         cursor.close();
     }
 
@@ -150,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", (dialog, which) -> {
             String taskName = taskInput.getText().toString().trim();
             String deadline = deadlineInput.getText().toString().trim();
+            if (deadline.isEmpty()) {
+                Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (!taskName.isEmpty()) {
                 dbHelper.addTask(taskName, deadline);
@@ -169,9 +177,12 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(this, ReminderNotification.class);
                         intent.putExtra("taskName", taskName);
 
+                        int taskId = dbHelper.getLastInsertedTaskId();
+
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                                 this,
-                                (int) System.currentTimeMillis(),
+                                taskId,
+//                                (int) System.currentTimeMillis(),
                                 intent,
                                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
                         );
@@ -202,11 +213,21 @@ public class MainActivity extends AppCompatActivity {
                                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                     calendar.set(Calendar.MINUTE, minute);
 
+                                    if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                                        Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
                                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                                     deadlineInput.setText(sdf.format(calendar.getTime()));
                                 },
-                                9, 0, true // Default 9:00 AM
+                                24, 0, true // Default 00:00 AM
                         );
+
+                        if (isToday(calendar)) {
+                            Calendar now = Calendar.getInstance();
+                            timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+                        }
 
                         timePicker.show();
                     },
@@ -214,8 +235,9 @@ public class MainActivity extends AppCompatActivity {
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
             );
-
+            datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
             datePicker.show();
+
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -240,34 +262,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         cursor.close();
-
-        int todayTotal = 0;
-        int todayCompleted = 0;
-        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-        for (Task task : taskList) {
-            String deadline = task.getDeadline();
-            if (deadline != null && deadline.length() >= 10) {
-                String taskDate = deadline.substring(0, 10);
-                if (taskDate.equals(today)) {
-                    todayTotal++;
-                    if (task.getStatus() == 1) {
-                        todayCompleted++;
-                    }
-                }
-            }
-        }
-
-        if (todayTotal > 0) {
-            progressBarTasks.setVisibility(View.VISIBLE);
-            progressLabel.setVisibility(View.VISIBLE);
-            int percent = (int) (((double) todayCompleted / todayTotal) * 100);
-            progressBarTasks.setProgress(percent);
-            progressLabel.setText("📊 Today's Progress: " + todayCompleted + " / " + todayTotal);
-        } else {
-            progressBarTasks.setVisibility(View.GONE);
-            progressLabel.setVisibility(View.GONE);
-        }
+        updateProgressBar(dbHelper);
 
         if (adapter == null) {
             adapter = new TaskAdapter(this, taskList);
@@ -283,19 +278,34 @@ public class MainActivity extends AppCompatActivity {
         dbHelper.updateTaskStatus(taskId, newStatus);
         displayTasks(dbHelper);
 
-        Chip chipCompleted = findViewById(R.id.chip2);
-        Chip chipArchived = findViewById(R.id.chip);
-        Chip chipTrash = findViewById(R.id.chipTrash);
+//       Chip chipCompleted = findViewById(R.id.chip2);
+//       Chip chipArchived = findViewById(R.id.chip);
+//       Chip chipTrash = findViewById(R.id.chipTrash);
+//
+//        if (chipCompleted.isChecked()) {
+//            displayFilteredTasks(dbHelper, 1);
+//        } else if (chipArchived.isChecked()) {
+//            displayFilteredTasks(dbHelper, 2);
+//        } else if (chipTrash.isChecked()) {
+//            displayFilteredTasks(dbHelper, 3);
+//        } else {
+//            displayTasks(dbHelper);
+//        }
 
-        if (chipCompleted.isChecked()) {
-            displayFilteredTasks(dbHelper, 1);
-        } else if (chipArchived.isChecked()) {
-            displayFilteredTasks(dbHelper, 2);
-        } else if (chipTrash.isChecked()) {
-            displayFilteredTasks(dbHelper, 3);
-        } else {
-            displayTasks(dbHelper);
+        if (newStatus == 1 || newStatus == 2 || newStatus == 3) {
+            Intent intent = new Intent(this, ReminderNotification.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    taskId,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null) {
+                alarmManager.cancel(pendingIntent);
+            }
         }
+        displayTasks(dbHelper);
 
     }
 
@@ -336,26 +346,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
         public void editTaskDialog(Task task) {
-        DatabaseTask dbHelper = new DatabaseTask(this);
+            DatabaseTask dbHelper = new DatabaseTask(this);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Task");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Edit Task");
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText taskInput = new EditText(this);
-        taskInput.setHint("Task Name");
-        taskInput.setText(task.getName());
-        layout.addView(taskInput);
+            final EditText taskInput = new EditText(this);
+            taskInput.setHint("Task Name");
+            taskInput.setText(task.getName());
+            layout.addView(taskInput);
 
-        EditText deadlineInput = new EditText(this); // not deadLineInput
-        deadlineInput.setHint("Select Date & Time");
-        deadlineInput.setFocusable(false);
-        deadlineInput.setClickable(true);
-        layout.addView(deadlineInput);
+            EditText deadlineInput = new EditText(this); // not deadLineInput
+            deadlineInput.setHint("Select Date & Time");
+            deadlineInput.setFocusable(false);
+            deadlineInput.setClickable(true);
+            layout.addView(deadlineInput);
 
-        builder.setView(layout);
+            builder.setView(layout);
 
             deadlineInput.setOnClickListener(v -> {
                 final Calendar calendar = Calendar.getInstance();
@@ -371,11 +381,21 @@ public class MainActivity extends AppCompatActivity {
                                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                         calendar.set(Calendar.MINUTE, minute);
 
+                                        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                                            Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+
                                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                                         deadlineInput.setText(sdf.format(calendar.getTime()));
                                     },
                                     9, 0, true // Default time: 9:00 AM
                             );
+
+                            if (isToday(calendar)) {
+                                Calendar now = Calendar.getInstance();
+                                timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+                            }
 
                             timePicker.show();
                         },
@@ -384,18 +404,113 @@ public class MainActivity extends AppCompatActivity {
                         calendar.get(Calendar.DAY_OF_MONTH)
                 );
 
+                datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePicker.show();
             });
 
 
             builder.setPositiveButton("Update", (dialog, which) -> {
-            String updatedName = taskInput.getText().toString();
-            String updatedDeadline = deadlineInput.getText().toString();
-            dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
-            displayTasks(dbHelper);
-        });
+                String updatedName = taskInput.getText().toString();
+                String updatedDeadline = deadlineInput.getText().toString();
+                if (updatedDeadline.isEmpty()) {
+                    Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+                dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
+                displayTasks(dbHelper);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                try {
+                    Date date = sdf.parse(updatedDeadline);
+                    if (date != null) {
+                        long triggerTime = date.getTime();
+
+                        Intent intent = new Intent(this, ReminderNotification.class);
+                        intent.putExtra("taskName", updatedName);
+
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                                this,
+                                task.getId(), // same ID ensures replacement
+                                intent,
+                                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                        );
+
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            if (alarmManager.canScheduleExactAlarms()) {
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+                            } else {
+                                Toast.makeText(this, "Exact alarms not permitted. Please allow in settings.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
     }
+    private boolean selectedDateIsToday(Calendar calendar) {
+        Calendar today = Calendar.getInstance();
+        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+                && today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private boolean isChipCompletedChecked() {
+        Chip chipCompleted = findViewById(R.id.chip2);
+        return chipCompleted != null && chipCompleted.isChecked();
+    }
+
+    private boolean isChipArchivedChecked() {
+        Chip chipArchived = findViewById(R.id.chip);
+        return chipArchived != null && chipArchived.isChecked();
+    }
+
+    private boolean isChipTrashChecked() {
+        Chip chipTrash = findViewById(R.id.chipTrash);
+        return chipTrash != null && chipTrash.isChecked();
+    }
+
+    private boolean isToday(Calendar calendar) {
+        Calendar today = Calendar.getInstance();
+        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+                today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private void updateProgressBar(DatabaseTask dbHelper) {
+        Cursor cursor = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
+        int todayTotal = 0;
+        int todayCompleted = 0;
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        while (cursor.moveToNext()) {
+            String deadline = cursor.getString(2);
+            int status = cursor.getInt(3);
+            if (deadline != null && deadline.length() >= 10) {
+                String taskDate = deadline.substring(0, 10);
+                if (taskDate.equals(today)) {
+                    todayTotal++;
+                    if (status == 1) todayCompleted++;
+                }
+            }
+        }
+        cursor.close();
+
+        if (todayTotal > 0) {
+            int percent = (int) (((double) todayCompleted / todayTotal) * 100);
+            progressBarTasks.setProgress(percent);
+            progressLabel.setText("📊 Today's Progress: " + todayCompleted + " / " + todayTotal);
+            progressBarTasks.setVisibility(View.VISIBLE);
+            progressLabel.setVisibility(View.VISIBLE);
+        } else {
+            progressBarTasks.setVisibility(View.GONE);
+            progressLabel.setVisibility(View.GONE);
+        }
+    }
+
+
+
+
 }
