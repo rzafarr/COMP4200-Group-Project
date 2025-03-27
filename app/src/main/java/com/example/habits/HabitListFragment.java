@@ -312,69 +312,69 @@ public class HabitListFragment extends Fragment {
         updateTaskList(dbHelper, 0);
     }
 
-    public void editTaskDialog(Task task) {
-        DatabaseTask dbHelper = new DatabaseTask(this);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Task");
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        final EditText taskInput = new EditText(this);
-        taskInput.setHint("Task Name");
-        taskInput.setText(task.getName());
-        layout.addView(taskInput);
-
-        EditText deadlineInput = new EditText(this); // not deadLineInput
-        deadlineInput.setHint("Select Date & Time");
-        deadlineInput.setFocusable(false);
-        deadlineInput.setClickable(true);
-        layout.addView(deadlineInput);
-
-        builder.setView(layout);
-
-            deadlineInput.setOnClickListener(v -> {
-                final Calendar calendar = Calendar.getInstance();
-
-                DatePickerDialog datePicker = new DatePickerDialog(this,
-                        (view, year, month, dayOfMonth) -> {
-                            calendar.set(Calendar.YEAR, year);
-                            calendar.set(Calendar.MONTH, month);
-                            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                            TimePickerDialog timePicker = new TimePickerDialog(this,
-                                    (timeView, hourOfDay, minute) -> {
-                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                        calendar.set(Calendar.MINUTE, minute);
-
-                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                                        deadlineInput.setText(sdf.format(calendar.getTime()));
-                                    },
-                                    9, 0, true // Default time: 9:00 AM
-                            );
-
-                            timePicker.show();
-                        },
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                );
-
-                datePicker.show();
-            });
-
-
-            builder.setPositiveButton("Update", (dialog, which) -> {
-            String updatedName = taskInput.getText().toString();
-            String updatedDeadline = deadlineInput.getText().toString();
-            dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
-            displayTasks(dbHelper);
-        });
-
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
+//    public void editTaskDialog(Task task) {
+//        DatabaseTask dbHelper = new DatabaseTask(this);
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Edit Task");
+//
+//        LinearLayout layout = new LinearLayout(this);
+//        layout.setOrientation(LinearLayout.VERTICAL);
+//
+//        final EditText taskInput = new EditText(this);
+//        taskInput.setHint("Task Name");
+//        taskInput.setText(task.getName());
+//        layout.addView(taskInput);
+//
+//        EditText deadlineInput = new EditText(this); // not deadLineInput
+//        deadlineInput.setHint("Select Date & Time");
+//        deadlineInput.setFocusable(false);
+//        deadlineInput.setClickable(true);
+//        layout.addView(deadlineInput);
+//
+//        builder.setView(layout);
+//
+//            deadlineInput.setOnClickListener(v -> {
+//                final Calendar calendar = Calendar.getInstance();
+//
+//                DatePickerDialog datePicker = new DatePickerDialog(this,
+//                        (view, year, month, dayOfMonth) -> {
+//                            calendar.set(Calendar.YEAR, year);
+//                            calendar.set(Calendar.MONTH, month);
+//                            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//
+//                            TimePickerDialog timePicker = new TimePickerDialog(this,
+//                                    (timeView, hourOfDay, minute) -> {
+//                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+//                                        calendar.set(Calendar.MINUTE, minute);
+//
+//                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+//                                        deadlineInput.setText(sdf.format(calendar.getTime()));
+//                                    },
+//                                    9, 0, true // Default time: 9:00 AM
+//                            );
+//
+//                            timePicker.show();
+//                        },
+//                        calendar.get(Calendar.YEAR),
+//                        calendar.get(Calendar.MONTH),
+//                        calendar.get(Calendar.DAY_OF_MONTH)
+//                );
+//
+//                datePicker.show();
+//            });
+//
+//
+//            builder.setPositiveButton("Update", (dialog, which) -> {
+//            String updatedName = taskInput.getText().toString();
+//            String updatedDeadline = deadlineInput.getText().toString();
+//            dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
+//            displayTasks(dbHelper);
+//        });
+//
+//        builder.setNegativeButton("Cancel", null);
+//        builder.show();
+//    }
 
     //     private void displayTasks(DatabaseTask dbHelper) {
     //     taskList.clear();
