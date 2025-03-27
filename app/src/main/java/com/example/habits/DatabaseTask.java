@@ -45,17 +45,21 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     public Cursor getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 0", null);
     }
 
     public Cursor getCompletedTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE status = 2", null);
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 1", null);
     }
 
     public Cursor getArchivedTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM tasks WHERE status = 2", null);
+    }
+    public Cursor getTrashedTasks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM tasks WHERE status = 3", null);
     }
 
     public void updateTaskStatus(int taskId, int status) {
@@ -82,8 +86,16 @@ public class DatabaseTask extends SQLiteOpenHelper{
         db.close();
     }
 
-    public Cursor getTrashedTasks() {
+    public int getLastInsertedTaskId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM tasks WHERE status = 3", null);
+        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM tasks", null);
+        int id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getInt(0);
+        }
+        cursor.close();
+        return id;
     }
+
+
 }

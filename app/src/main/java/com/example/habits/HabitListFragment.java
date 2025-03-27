@@ -227,6 +227,11 @@ public class HabitListFragment extends Fragment {
 
             Log.d("Task", "Task added: " + taskName);
 
+            if (deadline.isEmpty()) {
+                Toast.makeText(view.getContext(), "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (!taskName.isEmpty()) {
                 dbHelper.addTask(taskName, deadline);
 
@@ -268,7 +273,7 @@ public class HabitListFragment extends Fragment {
             }
         });
 
-        //         deadlineInput.setOnClickListener(v -> {
+        // deadlineInput.setOnClickListener(v -> {
         //     final Calendar calendar = Calendar.getInstance();
 
         //     DatePickerDialog datePicker = new DatePickerDialog(this,
@@ -282,11 +287,21 @@ public class HabitListFragment extends Fragment {
         //                             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         //                             calendar.set(Calendar.MINUTE, minute);
 
+        //                             if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+        //                                 Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+        //                                 return;
+        //                             }
+
         //                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         //                             deadlineInput.setText(sdf.format(calendar.getTime()));
         //                         },
-        //                         9, 0, true // Default 9:00 AM
+        //                         24, 0, true // Default 00:00 AM
         //                 );
+
+        //                 if (isToday(calendar)) {
+        //                     Calendar now = Calendar.getInstance();
+        //                     timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+        //                 }
 
         //                 timePicker.show();
         //             },
@@ -294,8 +309,9 @@ public class HabitListFragment extends Fragment {
         //             calendar.get(Calendar.MONTH),
         //             calendar.get(Calendar.DAY_OF_MONTH)
         //     );
-
+        //     datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
         //     datePicker.show();
+
         // });
 
 
@@ -310,70 +326,147 @@ public class HabitListFragment extends Fragment {
         DatabaseTask dbHelper = new DatabaseTask(view.getContext());
         dbHelper.updateTaskStatus(taskId, newStatus);
         updateTaskList(dbHelper, 0);
+
+//                 DatabaseTask dbHelper = new DatabaseTask(this);
+//         dbHelper.updateTaskStatus(taskId, newStatus);
+//         displayTasks(dbHelper);
+
+// //       Chip chipCompleted = findViewById(R.id.chip2);
+// //       Chip chipArchived = findViewById(R.id.chip);
+// //       Chip chipTrash = findViewById(R.id.chipTrash);
+// //
+// //        if (chipCompleted.isChecked()) {
+// //            displayFilteredTasks(dbHelper, 1);
+// //        } else if (chipArchived.isChecked()) {
+// //            displayFilteredTasks(dbHelper, 2);
+// //        } else if (chipTrash.isChecked()) {
+// //            displayFilteredTasks(dbHelper, 3);
+// //        } else {
+// //            displayTasks(dbHelper);
+// //        }
+
+//         if (newStatus == 1 || newStatus == 2 || newStatus == 3) {
+//             Intent intent = new Intent(this, ReminderNotification.class);
+//             PendingIntent pendingIntent = PendingIntent.getBroadcast(
+//                     this,
+//                     taskId,
+//                     intent,
+//                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+//             );
+//             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//             if (alarmManager != null) {
+//                 alarmManager.cancel(pendingIntent);
+//             }
+//         }
+//         displayTasks(dbHelper);
     }
 
-//    public void editTaskDialog(Task task) {
-//        DatabaseTask dbHelper = new DatabaseTask(this);
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Edit Task");
-//
-//        LinearLayout layout = new LinearLayout(this);
-//        layout.setOrientation(LinearLayout.VERTICAL);
-//
-//        final EditText taskInput = new EditText(this);
-//        taskInput.setHint("Task Name");
-//        taskInput.setText(task.getName());
-//        layout.addView(taskInput);
-//
-//        EditText deadlineInput = new EditText(this); // not deadLineInput
-//        deadlineInput.setHint("Select Date & Time");
-//        deadlineInput.setFocusable(false);
-//        deadlineInput.setClickable(true);
-//        layout.addView(deadlineInput);
-//
-//        builder.setView(layout);
-//
-//            deadlineInput.setOnClickListener(v -> {
-//                final Calendar calendar = Calendar.getInstance();
-//
-//                DatePickerDialog datePicker = new DatePickerDialog(this,
-//                        (view, year, month, dayOfMonth) -> {
-//                            calendar.set(Calendar.YEAR, year);
-//                            calendar.set(Calendar.MONTH, month);
-//                            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//
-//                            TimePickerDialog timePicker = new TimePickerDialog(this,
-//                                    (timeView, hourOfDay, minute) -> {
-//                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-//                                        calendar.set(Calendar.MINUTE, minute);
-//
-//                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-//                                        deadlineInput.setText(sdf.format(calendar.getTime()));
-//                                    },
-//                                    9, 0, true // Default time: 9:00 AM
-//                            );
-//
-//                            timePicker.show();
-//                        },
-//                        calendar.get(Calendar.YEAR),
-//                        calendar.get(Calendar.MONTH),
-//                        calendar.get(Calendar.DAY_OF_MONTH)
-//                );
-//
-//                datePicker.show();
-//            });
-//
-//
-//            builder.setPositiveButton("Update", (dialog, which) -> {
-//            String updatedName = taskInput.getText().toString();
-//            String updatedDeadline = deadlineInput.getText().toString();
-//            dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
-//            displayTasks(dbHelper);
-//        });
-//
-//        builder.setNegativeButton("Cancel", null);
-//        builder.show();
+        // public void editTaskDialog(Task task) {
+        //     DatabaseTask dbHelper = new DatabaseTask(this);
+
+        //     AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //     builder.setTitle("Edit Task");
+
+        //     LinearLayout layout = new LinearLayout(this);
+        //     layout.setOrientation(LinearLayout.VERTICAL);
+
+        //     final EditText taskInput = new EditText(this);
+        //     taskInput.setHint("Task Name");
+        //     taskInput.setText(task.getName());
+        //     layout.addView(taskInput);
+
+        //     EditText deadlineInput = new EditText(this); // not deadLineInput
+        //     deadlineInput.setHint("Select Date & Time");
+        //     deadlineInput.setFocusable(false);
+        //     deadlineInput.setClickable(true);
+        //     layout.addView(deadlineInput);
+
+        //     builder.setView(layout);
+
+        //     deadlineInput.setOnClickListener(v -> {
+        //         final Calendar calendar = Calendar.getInstance();
+
+        //         DatePickerDialog datePicker = new DatePickerDialog(this,
+        //                 (view, year, month, dayOfMonth) -> {
+        //                     calendar.set(Calendar.YEAR, year);
+        //                     calendar.set(Calendar.MONTH, month);
+        //                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        //                     TimePickerDialog timePicker = new TimePickerDialog(this,
+        //                             (timeView, hourOfDay, minute) -> {
+        //                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        //                                 calendar.set(Calendar.MINUTE, minute);
+
+        //                                 if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+        //                                     Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+        //                                     return;
+        //                                 }
+
+        //                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        //                                 deadlineInput.setText(sdf.format(calendar.getTime()));
+        //                             },
+        //                             9, 0, true // Default time: 9:00 AM
+        //                     );
+
+        //                     if (isToday(calendar)) {
+        //                         Calendar now = Calendar.getInstance();
+        //                         timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+        //                     }
+
+        //                     timePicker.show();
+        //                 },
+        //                 calendar.get(Calendar.YEAR),
+        //                 calendar.get(Calendar.MONTH),
+        //                 calendar.get(Calendar.DAY_OF_MONTH)
+        //         );
+
+        //         datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+        //         datePicker.show();
+        //     });
+
+
+        //     builder.setPositiveButton("Update", (dialog, which) -> {
+        //         String updatedName = taskInput.getText().toString();
+        //         String updatedDeadline = deadlineInput.getText().toString();
+        //         if (updatedDeadline.isEmpty()) {
+        //             Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+        //             return;
+        //         }
+
+        //         dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
+        //         displayTasks(dbHelper);
+
+        //         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        //         try {
+        //             Date date = sdf.parse(updatedDeadline);
+        //             if (date != null) {
+        //                 long triggerTime = date.getTime();
+
+        //                 Intent intent = new Intent(this, ReminderNotification.class);
+        //                 intent.putExtra("taskName", updatedName);
+
+        //                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
+        //                         this,
+        //                         task.getId(), // same ID ensures replacement
+        //                         intent,
+        //                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        //                 );
+
+        //                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        //                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        //                     if (alarmManager.canScheduleExactAlarms()) {
+        //                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+        //                     } else {
+        //                         Toast.makeText(this, "Exact alarms not permitted. Please allow in settings.", Toast.LENGTH_LONG).show();
+        //                     }
+        //                 }
+        //             }
+        //         } catch (Exception e) {
+        //             e.printStackTrace();
+        //         }
+        //     });
+        //     builder.setNegativeButton("Cancel", null);
+        //     builder.show();
 //    }
 
     //     private void displayTasks(DatabaseTask dbHelper) {
