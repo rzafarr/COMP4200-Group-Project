@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
@@ -56,6 +59,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     dbTask.updateTaskStatus(task.getId(), 3);
                     taskList.remove(position);
                     notifyItemRemoved(position);
+
+                    // show a snackbar message
+                    Snackbar snackbar = Snackbar.make(v, "Task deleted", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 });
                 break;
             case 1:
@@ -167,6 +174,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         taskList.get(taskId).setStatus(newStatus);
         dbHelper.updateTaskStatus(taskId, newStatus);
         notifyItemRemoved(taskId);
+    }
+
+    public void updateTaskList(List<Task> newTaskList) {
+        taskList = newTaskList;
+        notifyDataSetChanged();
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {

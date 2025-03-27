@@ -170,7 +170,7 @@ public class HabitListFragment extends Fragment {
 
         if (adapter != null && recyclerView.getAdapter() != null) {
             // update the adapter
-            adapter.notifyDataSetChanged();
+            adapter.updateTaskList(taskList);
         } else {
             // create the adapter if it doesn't exist
             adapter = new TaskAdapter(getContext(), taskList);
