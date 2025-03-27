@@ -62,7 +62,6 @@
         android:elevation="8dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-
         <!-- Bottom sheet contents. -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -86,49 +85,50 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/drag_handle" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/archivedChip"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/filterChips"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="32dp"
-                android:text="@string/chip_archived"
-                app:checkedIconVisible="false"
-                app:chipIcon="@drawable/archive_outline"
-                app:chipIconVisible="true"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@id/textView">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/completedChip"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:checkable="true"
-                android:text="@string/chip_completed"
-                app:checkedIconVisible="false"
-                app:chipIcon="@drawable/check_circle_outline"
-                app:chipIconVisible="true"
-                app:layout_constraintBottom_toBottomOf="@+id/archivedChip"
-                app:layout_constraintStart_toEndOf="@id/archivedChip" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/archivedChip"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Archived"
+                    app:checkedIconVisible="false"
+                    app:chipIcon="@drawable/archive_outline"
+                    app:chipIconVisible="true" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/deletedChip"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:checkable="true"
-                android:text="@string/chip_completed"
-                app:checkedIconVisible="false"
-                app:chipIcon="@drawable/delete_outline"
-                app:chipIconVisible="true"
-                app:layout_constraintBottom_toBottomOf="@+id/archivedChip"
-                app:layout_constraintStart_toEndOf="@+id/completedChip" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/completedChip"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="Completed"
+                    app:checkedIconVisible="false"
+                    app:chipIcon="@drawable/check_circle_outline"
+                    app:chipIconVisible="true" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/trashedChip"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="Trashed"
+                    app:checkedIconVisible="false"
+                    app:chipIcon="@drawable/delete_outline"
+                    app:chipIconVisible="true" />
+            </com.google.android.material.chip.ChipGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

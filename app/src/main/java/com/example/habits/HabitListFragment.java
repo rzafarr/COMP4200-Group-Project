@@ -1,13 +1,7 @@
 package com.example.habits;
 
-import static android.content.Context.ALARM_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,13 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -105,42 +96,32 @@ public class HabitListFragment extends Fragment {
             }
         });
 
+        // initialize filter chips
+        ChipGroup filterChips = view.findViewById(R.id.filterChips);
+        filterChips.setSingleSelection(true);
+
+        filterChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (!checkedIds.isEmpty()) {
+                Chip chip = group.findViewById(checkedIds.get(0));
+
+                switch (chip.getText().toString()) {
+                    case "Completed":
+                        updateTaskList(dbHelper, 1);
+                        break;
+                    case "Archived":
+                        updateTaskList(dbHelper, 2);
+                        break;
+                    case "Trashed":
+                        updateTaskList(dbHelper, 3);
+                        break;
+                }
+            }
+            else {
+                updateTaskList(dbHelper, 0);
+            }
+        });
+
         updateTaskList(dbHelper, 0);
-    //     Chip chipCompleted = findViewById(R.id.chip2);
-    //     Chip chipArchived = findViewById(R.id.chip);
-    //     Chip chipTrash = findViewById(R.id.chipTrash);
-
-    //     chipCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
-    //         if (isChecked) {
-    //             chipArchived.setChecked(false);
-    //             chipTrash.setChecked(false);
-    //             displayFilteredTasks(dbHelper, 1);
-    //         } else {
-    //             displayTasks(dbHelper);
-    //         }
-    //         return true;
-    //     });
-    // }
-
-    //     chipArchived.setOnCheckedChangeListener((buttonView, isChecked) -> {
-    //         if (isChecked) {
-    //             chipCompleted.setChecked(false);
-    //             chipTrash.setChecked(false);
-    //             displayFilteredTasks(dbHelper, 2);
-    //         } else {
-    //             displayTasks(dbHelper);
-    //         }
-    //     });
-
-    //     chipTrash.setOnCheckedChangeListener((buttonView, isChecked) -> {
-    //         if (isChecked) {
-    //             chipCompleted.setChecked(false);
-    //             chipArchived.setChecked(false);
-    //             displayFilteredTasks(dbHelper, 3);
-    //         } else {
-    //             displayTasks(dbHelper);
-    //         }
-    //     });
 
     //     progressBarTasks = findViewById(R.id.progressBarTasks);
     //     progressLabel = findViewById(R.id.progressLabel);
