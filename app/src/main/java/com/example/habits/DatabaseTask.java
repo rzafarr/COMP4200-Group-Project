@@ -70,16 +70,18 @@ public class DatabaseTask extends SQLiteOpenHelper{
         db.close();
     }
 
-    public void deleteTask(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("tasks", "_id=?", new String[]{String.valueOf(id)});
-        db.close();
-    }
-
-    public void updateTask(int id, String name, String deadline) {
+    public void updateTaskName(int id, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
+
+        db.update("tasks", values, "_id=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void updateTaskDeadline(int id, String deadline) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
         values.put("deadline", deadline);
 
         db.update("tasks", values, "_id=?", new String[]{String.valueOf(id)});

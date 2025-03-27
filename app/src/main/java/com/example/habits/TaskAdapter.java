@@ -15,8 +15,6 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> taskList;
 
-    private List<Task> tasks;
-
     private DatabaseTask dbHelper;
     private Context context;
     public TaskAdapter(Context context, List<Task> taskList) {
@@ -35,7 +33,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = taskList.get(position);
-        holder.taskName.setText("📝 " + task.getName());
+        holder.taskName.setText(task.getName());
         holder.taskDeadline.setText(task.getDeadline());
 
         holder.completeButton.setVisibility(View.GONE);
@@ -44,6 +42,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.archiveButton.setVisibility(View.GONE);
         holder.restoreButton.setVisibility(View.GONE);
 
+        DatabaseTask dbTask = new DatabaseTask(context);
+
         switch (task.getStatus()) {
             case 0:
                 // task is not completed, archived, or trashed
@@ -51,6 +51,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setVisibility(View.VISIBLE);
                 holder.archiveButton.setVisibility(View.VISIBLE);
+
+                holder.deleteButton.setOnClickListener(v -> {
+                    dbTask.updateTaskStatus(task.getId(), 3);
+                    taskList.remove(position);
+                    notifyItemRemoved(position);
+                });
                 break;
             case 1:
                 // task is completed
@@ -143,6 +149,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public int getItemCount() {
         return taskList.size();
+    }
+
+    private void updateTaskName(int taskId, String newName) {
+        taskList.get(taskId).setName(newName);
+        dbHelper.updateTaskName(taskId, newName);
+        notifyItemChanged(taskId);
+    }
+
+    private void updateTaskDeadline(int taskId, String newDeadline) {
+        taskList.get(taskId).setDeadline(newDeadline);
+        dbHelper.updateTaskDeadline(taskId, newDeadline);
+        notifyItemChanged(taskId);
+    }
+
+    private void updateTaskStatus(int taskId, int newStatus) {
+        taskList.get(taskId).setStatus(newStatus);
+        dbHelper.updateTaskStatus(taskId, newStatus);
+        notifyItemRemoved(taskId);
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {

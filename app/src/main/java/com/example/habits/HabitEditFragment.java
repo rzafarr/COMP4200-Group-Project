@@ -1,50 +1,31 @@
 package com.example.habits;
 
-import static android.content.Context.ALARM_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
+import static android.text.format.DateUtils.isToday;
 
-import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 public class HabitEditFragment extends Fragment {
-    private RecyclerView recyclerView;
     private TaskAdapter adapter;
-    private List<Task> taskList = new ArrayList<>();
 
     public HabitEditFragment() {
         // Required empty public constructor
@@ -70,7 +51,6 @@ public class HabitEditFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_habit_edit, container, false);
 
-
         // return the inflated view
         return view;
     }
@@ -79,16 +59,73 @@ public class HabitEditFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        TextInputEditText titleEditText = view.findViewById(R.id.titleEditText);
+        TextInputEditText dateEditText = view.findViewById(R.id.dateEditText);
 
         // set up the date picker
-        TextInputEditText dateInput = view.findViewById(R.id.dateInputFieldText);
+        dateEditText.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
 
-        dateInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.show(getFragmentManager(), "datePicker");
+            DatePickerDialog datePicker = new DatePickerDialog(v.getContext(),
+                    (datePickerView, year, month, dayOfMonth) -> {
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, month);
+                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        TimePickerDialog timePicker = new TimePickerDialog(v.getContext(),
+                                (timePickerView, hourOfDay, minute) -> {
+                                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                    calendar.set(Calendar.MINUTE, minute);
+
+                                    if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                                        Toast.makeText(v.getContext(), "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                                    dateEditText.setText(sdf.format(calendar.getTime()));
+                                },
+                                9, 0, true // Default time: 9:00 AM
+                        );
+
+                        if (isToday(calendar.getTimeInMillis())) {
+                            Calendar now = Calendar.getInstance();
+                            timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+                        }
+
+                        timePicker.show();
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+
+            datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePicker.show();
+        });
+
+        // set up the submit button
+        Button submitButton = view.findViewById(R.id.submitButton);
+
+        submitButton.setOnClickListener(v -> {
+            String name = titleEditText.getText().toString().trim();
+            String deadline = dateEditText.getText().toString().trim();
+
+            if (name.isEmpty()) {
+                Toast.makeText(v.getContext(), "⛔ Please enter a habit name!", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            if (deadline.isEmpty()) {
+                Toast.makeText(v.getContext(), "⛔ Please select a deadline!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            DatabaseTask dbHelper = new DatabaseTask(v.getContext());
+            dbHelper.addTask(name, deadline);
+
+            // navigate back to the habit list fragment
+            getParentFragmentManager().popBackStack();
         });
     }
 }

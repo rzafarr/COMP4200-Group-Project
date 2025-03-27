@@ -57,10 +57,32 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/materialDivider">
+
+            <Button
+                android:id="@+id/deleteButton"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:icon="@drawable/delete_outline" />
+
+            <Button
+                android:id="@+id/archiveButton"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/archive_outline" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/editButton"
@@ -80,27 +102,10 @@
                 app:icon="@drawable/check_outline" />
 
             <Button
-                android:id="@+id/archiveButton"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/archive_outline" />
-
-            <Button
-                android:id="@+id/deleteButton"
-                style="?attr/materialIconButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:icon="@drawable/delete_outline" />
-
-            <Button
                 android:id="@+id/restoreButton"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_weight="1"
                 android:text="Restore"
                 app:icon="@drawable/restore_trash_outline" />
         </LinearLayout>

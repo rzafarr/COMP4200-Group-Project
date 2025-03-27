@@ -30,12 +30,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class HabitListFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
-    private List<Task> taskList = new ArrayList<>();
-    private View view;
 
     // ProgressBar progressBarTasks;
     // TextView progressLabel;
@@ -60,7 +59,11 @@ public class HabitListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_habit_list, container, false);
+        return inflater.inflate(R.layout.fragment_habit_list, container, false);
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // initialize variables
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
@@ -73,9 +76,7 @@ public class HabitListFragment extends Fragment {
         // initialize fab
         ExtendedFloatingActionButton fab = view.findViewById(R.id.addFab);
         fab.setOnClickListener(fabView -> {
-            //showAddTaskDialog(dbHelper);
             // navigate to edit habit fragment
-
             NavController navController = NavHostFragment.findNavController(this);
             navController.navigate(R.id.action_habitListFragment_to_habitEditFragment);
         });
@@ -87,9 +88,11 @@ public class HabitListFragment extends Fragment {
         // initialize top bar
         MaterialToolbar topAppBar = view.findViewById(R.id.toolbar);
         topAppBar.setOnMenuItemClickListener(item -> {
-            switch (item.getTitle().toString()) {
+            switch (Objects.requireNonNull(item.getTitle()).toString()) {
                 case "Filters":
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    return true;
+                case "More":
                     return true;
                 default:
                     return false;
@@ -115,29 +118,25 @@ public class HabitListFragment extends Fragment {
                         updateTaskList(dbHelper, 3);
                         break;
                 }
-            }
-            else {
+            } else {
                 updateTaskList(dbHelper, 0);
             }
         });
 
         updateTaskList(dbHelper, 0);
 
-    //     progressBarTasks = findViewById(R.id.progressBarTasks);
-    //     progressLabel = findViewById(R.id.progressLabel);
+        //     progressBarTasks = findViewById(R.id.progressBarTasks);
+        //     progressLabel = findViewById(R.id.progressLabel);
 
         Cursor cursor = dbHelper.getAllTasks();
         while (cursor.moveToNext()) {
             Log.d("Task", "ID: " + cursor.getInt(0) + " Name: " + cursor.getString(1));
         }
         cursor.close();
-
-        // return the inflated view
-        return view;
     }
 
     private void updateTaskList(DatabaseTask dbHelper, int status) {
-        taskList.clear();
+        List<Task> taskList = new ArrayList<>();
 
         // menuTitle.setVisibility(View.VISIBLE);
         // progressBarTasks.setVisibility(View.VISIBLE);
@@ -169,34 +168,34 @@ public class HabitListFragment extends Fragment {
         }
         cursor.close();
 
-        if (adapter != null) {
+        if (adapter != null && recyclerView.getAdapter() != null) {
             // update the adapter
             adapter.notifyDataSetChanged();
         } else {
             // create the adapter if it doesn't exist
-            adapter = new TaskAdapter(view.getContext(), taskList);
-            
-            recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+            adapter = new TaskAdapter(getContext(), taskList);
+
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.setAdapter(adapter);
         }
     }
 
     @SuppressLint("ScheduleExactAlarm")
     private void showAddTaskDialog(DatabaseTask dbHelper) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Add New Task");
 
-        EditText taskInput = new EditText(view.getContext());
+        EditText taskInput = new EditText(getContext());
         taskInput.setHint("Enter Task Name");
         taskInput.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        EditText deadlineInput = new EditText(view.getContext());
+        EditText deadlineInput = new EditText(getContext());
         deadlineInput.setHint("Enter Date & Time (YYYY-MM-DD hh:mm)");
         deadlineInput.setInputType(InputType.TYPE_CLASS_TEXT);
         deadlineInput.setFocusable(false);
         deadlineInput.setClickable(true);
 
-        LinearLayout layout = new LinearLayout(view.getContext());
+        LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(taskInput);
         layout.addView(deadlineInput);
@@ -210,7 +209,7 @@ public class HabitListFragment extends Fragment {
             Log.d("Task", "Task added: " + taskName);
 
             if (deadline.isEmpty()) {
-                Toast.makeText(view.getContext(), "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -219,39 +218,39 @@ public class HabitListFragment extends Fragment {
 
                 Log.d("Task", "Task added: " + taskName);
 
-                Toast.makeText(view.getContext(), "Task Added!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Task Added!", Toast.LENGTH_SHORT).show();
                 updateTaskList(dbHelper, 0);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
 //                try {
 //
-                    // Date date = sdf.parse(deadline);
-                    // if (date != null) {
-                    //     long triggerTime = date.getTime();
+                // Date date = sdf.parse(deadline);
+                // if (date != null) {
+                //     long triggerTime = date.getTime();
 
-                    //     //long triggerTime = System.currentTimeMillis() + 10000; //Testing Purpose
+                //     //long triggerTime = System.currentTimeMillis() + 10000; //Testing Purpose
 
-                    //     Intent intent = new Intent(this, ReminderNotification.class);
-                    //     intent.putExtra("taskName", taskName);
+                //     Intent intent = new Intent(this, ReminderNotification.class);
+                //     intent.putExtra("taskName", taskName);
 
-                    //     PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    //             this,
-                    //             (int) System.currentTimeMillis(),
-                    //             intent,
-                    //             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                    //     );
+                //     PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                //             this,
+                //             (int) System.currentTimeMillis(),
+                //             intent,
+                //             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                //     );
 
-                    //     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                    //     alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-                    // }
+                //     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                //     alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+                // }
 //                    }
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
 
             } else {
-                Toast.makeText(view.getContext(), "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -305,7 +304,7 @@ public class HabitListFragment extends Fragment {
 
 
     public void updateTaskStatus(int taskId, int newStatus) {
-        DatabaseTask dbHelper = new DatabaseTask(view.getContext());
+        DatabaseTask dbHelper = new DatabaseTask(getContext());
         dbHelper.updateTaskStatus(taskId, newStatus);
         updateTaskList(dbHelper, 0);
 
@@ -343,112 +342,112 @@ public class HabitListFragment extends Fragment {
 //         displayTasks(dbHelper);
     }
 
-        // public void editTaskDialog(Task task) {
-        //     DatabaseTask dbHelper = new DatabaseTask(this);
+    // public void editTaskDialog(Task task) {
+    //     DatabaseTask dbHelper = new DatabaseTask(this);
 
-        //     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //     builder.setTitle("Edit Task");
+    //     AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    //     builder.setTitle("Edit Task");
 
-        //     LinearLayout layout = new LinearLayout(this);
-        //     layout.setOrientation(LinearLayout.VERTICAL);
+    //     LinearLayout layout = new LinearLayout(this);
+    //     layout.setOrientation(LinearLayout.VERTICAL);
 
-        //     final EditText taskInput = new EditText(this);
-        //     taskInput.setHint("Task Name");
-        //     taskInput.setText(task.getName());
-        //     layout.addView(taskInput);
+    //     final EditText taskInput = new EditText(this);
+    //     taskInput.setHint("Task Name");
+    //     taskInput.setText(task.getName());
+    //     layout.addView(taskInput);
 
-        //     EditText deadlineInput = new EditText(this); // not deadLineInput
-        //     deadlineInput.setHint("Select Date & Time");
-        //     deadlineInput.setFocusable(false);
-        //     deadlineInput.setClickable(true);
-        //     layout.addView(deadlineInput);
+    //     EditText deadlineInput = new EditText(this); // not deadLineInput
+    //     deadlineInput.setHint("Select Date & Time");
+    //     deadlineInput.setFocusable(false);
+    //     deadlineInput.setClickable(true);
+    //     layout.addView(deadlineInput);
 
-        //     builder.setView(layout);
+    //     builder.setView(layout);
 
-        //     deadlineInput.setOnClickListener(v -> {
-        //         final Calendar calendar = Calendar.getInstance();
+    //     deadlineInput.setOnClickListener(v -> {
+    //         final Calendar calendar = Calendar.getInstance();
 
-        //         DatePickerDialog datePicker = new DatePickerDialog(this,
-        //                 (view, year, month, dayOfMonth) -> {
-        //                     calendar.set(Calendar.YEAR, year);
-        //                     calendar.set(Calendar.MONTH, month);
-        //                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    //         DatePickerDialog datePicker = new DatePickerDialog(this,
+    //                 (view, year, month, dayOfMonth) -> {
+    //                     calendar.set(Calendar.YEAR, year);
+    //                     calendar.set(Calendar.MONTH, month);
+    //                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        //                     TimePickerDialog timePicker = new TimePickerDialog(this,
-        //                             (timeView, hourOfDay, minute) -> {
-        //                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        //                                 calendar.set(Calendar.MINUTE, minute);
+    //                     TimePickerDialog timePicker = new TimePickerDialog(this,
+    //                             (timeView, hourOfDay, minute) -> {
+    //                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+    //                                 calendar.set(Calendar.MINUTE, minute);
 
-        //                                 if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-        //                                     Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
-        //                                     return;
-        //                                 }
+    //                                 if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+    //                                     Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
+    //                                     return;
+    //                                 }
 
-        //                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        //                                 deadlineInput.setText(sdf.format(calendar.getTime()));
-        //                             },
-        //                             9, 0, true // Default time: 9:00 AM
-        //                     );
+    //                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+    //                                 deadlineInput.setText(sdf.format(calendar.getTime()));
+    //                             },
+    //                             9, 0, true // Default time: 9:00 AM
+    //                     );
 
-        //                     if (isToday(calendar)) {
-        //                         Calendar now = Calendar.getInstance();
-        //                         timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
-        //                     }
+    //                     if (isToday(calendar)) {
+    //                         Calendar now = Calendar.getInstance();
+    //                         timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+    //                     }
 
-        //                     timePicker.show();
-        //                 },
-        //                 calendar.get(Calendar.YEAR),
-        //                 calendar.get(Calendar.MONTH),
-        //                 calendar.get(Calendar.DAY_OF_MONTH)
-        //         );
+    //                     timePicker.show();
+    //                 },
+    //                 calendar.get(Calendar.YEAR),
+    //                 calendar.get(Calendar.MONTH),
+    //                 calendar.get(Calendar.DAY_OF_MONTH)
+    //         );
 
-        //         datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-        //         datePicker.show();
-        //     });
+    //         datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+    //         datePicker.show();
+    //     });
 
 
-        //     builder.setPositiveButton("Update", (dialog, which) -> {
-        //         String updatedName = taskInput.getText().toString();
-        //         String updatedDeadline = deadlineInput.getText().toString();
-        //         if (updatedDeadline.isEmpty()) {
-        //             Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
-        //             return;
-        //         }
+    //     builder.setPositiveButton("Update", (dialog, which) -> {
+    //         String updatedName = taskInput.getText().toString();
+    //         String updatedDeadline = deadlineInput.getText().toString();
+    //         if (updatedDeadline.isEmpty()) {
+    //             Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
+    //             return;
+    //         }
 
-        //         dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
-        //         displayTasks(dbHelper);
+    //         dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
+    //         displayTasks(dbHelper);
 
-        //         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        //         try {
-        //             Date date = sdf.parse(updatedDeadline);
-        //             if (date != null) {
-        //                 long triggerTime = date.getTime();
+    //         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+    //         try {
+    //             Date date = sdf.parse(updatedDeadline);
+    //             if (date != null) {
+    //                 long triggerTime = date.getTime();
 
-        //                 Intent intent = new Intent(this, ReminderNotification.class);
-        //                 intent.putExtra("taskName", updatedName);
+    //                 Intent intent = new Intent(this, ReminderNotification.class);
+    //                 intent.putExtra("taskName", updatedName);
 
-        //                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
-        //                         this,
-        //                         task.getId(), // same ID ensures replacement
-        //                         intent,
-        //                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        //                 );
+    //                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
+    //                         this,
+    //                         task.getId(), // same ID ensures replacement
+    //                         intent,
+    //                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+    //                 );
 
-        //                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        //                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        //                     if (alarmManager.canScheduleExactAlarms()) {
-        //                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-        //                     } else {
-        //                         Toast.makeText(this, "Exact alarms not permitted. Please allow in settings.", Toast.LENGTH_LONG).show();
-        //                     }
-        //                 }
-        //             }
-        //         } catch (Exception e) {
-        //             e.printStackTrace();
-        //         }
-        //     });
-        //     builder.setNegativeButton("Cancel", null);
-        //     builder.show();
+    //                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+    //                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    //                     if (alarmManager.canScheduleExactAlarms()) {
+    //                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+    //                     } else {
+    //                         Toast.makeText(this, "Exact alarms not permitted. Please allow in settings.", Toast.LENGTH_LONG).show();
+    //                     }
+    //                 }
+    //             }
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //         }
+    //     });
+    //     builder.setNegativeButton("Cancel", null);
+    //     builder.show();
 //    }
 
     //     private void displayTasks(DatabaseTask dbHelper) {
@@ -509,20 +508,6 @@ public class HabitListFragment extends Fragment {
 //                && today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
 //    }
 //
-//    private boolean isChipCompletedChecked() {
-//        Chip chipCompleted = findViewById(R.id.chip2);
-//        return chipCompleted != null && chipCompleted.isChecked();
-//    }
-//
-//    private boolean isChipArchivedChecked() {
-//        Chip chipArchived = findViewById(R.id.chip);
-//        return chipArchived != null && chipArchived.isChecked();
-//    }
-//
-//    private boolean isChipTrashChecked() {
-//        Chip chipTrash = findViewById(R.id.chipTrash);
-//        return chipTrash != null && chipTrash.isChecked();
-//    }
 //
 //    private boolean isToday(Calendar calendar) {
 //        Calendar today = Calendar.getInstance();

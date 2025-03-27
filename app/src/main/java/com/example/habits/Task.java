@@ -15,9 +15,32 @@ public class Task {
 
     }
 
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getDeadline() { return deadline; }
-    public int getStatus() { return status; }
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
 }
