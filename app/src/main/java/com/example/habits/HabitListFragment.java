@@ -35,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -519,4 +520,63 @@ public class HabitListFragment extends Fragment {
     //         adapter.notifyDataSetChanged();
     //     }
     // }
+
+
+//    private boolean selectedDateIsToday(Calendar calendar) {
+//        Calendar today = Calendar.getInstance();
+//        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+//                && today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
+//    }
+//
+//    private boolean isChipCompletedChecked() {
+//        Chip chipCompleted = findViewById(R.id.chip2);
+//        return chipCompleted != null && chipCompleted.isChecked();
+//    }
+//
+//    private boolean isChipArchivedChecked() {
+//        Chip chipArchived = findViewById(R.id.chip);
+//        return chipArchived != null && chipArchived.isChecked();
+//    }
+//
+//    private boolean isChipTrashChecked() {
+//        Chip chipTrash = findViewById(R.id.chipTrash);
+//        return chipTrash != null && chipTrash.isChecked();
+//    }
+//
+//    private boolean isToday(Calendar calendar) {
+//        Calendar today = Calendar.getInstance();
+//        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
+//                today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
+//    }
+//
+//    private void updateProgressBar(DatabaseTask dbHelper) {
+//        Cursor cursor = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
+//        int todayTotal = 0;
+//        int todayCompleted = 0;
+//        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+//
+//        while (cursor.moveToNext()) {
+//            String deadline = cursor.getString(2);
+//            int status = cursor.getInt(3);
+//            if (deadline != null && deadline.length() >= 10) {
+//                String taskDate = deadline.substring(0, 10);
+//                if (taskDate.equals(today)) {
+//                    todayTotal++;
+//                    if (status == 1) todayCompleted++;
+//                }
+//            }
+//        }
+//        cursor.close();
+//
+//        if (todayTotal > 0) {
+//            int percent = (int) (((double) todayCompleted / todayTotal) * 100);
+//            progressBarTasks.setProgress(percent);
+//            progressLabel.setText("📊 Today's Progress: " + todayCompleted + " / " + todayTotal);
+//            progressBarTasks.setVisibility(View.VISIBLE);
+//            progressLabel.setVisibility(View.VISIBLE);
+//        } else {
+//            progressBarTasks.setVisibility(View.GONE);
+//            progressLabel.setVisibility(View.GONE);
+//        }
+//    }
 }
