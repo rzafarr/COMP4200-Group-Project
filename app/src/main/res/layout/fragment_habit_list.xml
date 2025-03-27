@@ -24,7 +24,8 @@
                 android:elevation="0dp"
                 app:layout_collapseMode="pin"
                 app:menu="@menu/top_app_bar"
-                app:title="Habits"></com.google.android.material.appbar.MaterialToolbar>
+                app:title="Habits">
+            </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -112,8 +113,20 @@
                 app:chipIconVisible="true"
                 app:layout_constraintBottom_toBottomOf="@+id/archivedChip"
                 app:layout_constraintStart_toEndOf="@id/archivedChip" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/deletedChip"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:checkable="true"
+                android:text="@string/chip_completed"
+                app:checkedIconVisible="false"
+                app:chipIcon="@drawable/delete_outline"
+                app:chipIconVisible="true"
+                app:layout_constraintBottom_toBottomOf="@+id/archivedChip"
+                app:layout_constraintStart_toEndOf="@+id/completedChip" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
