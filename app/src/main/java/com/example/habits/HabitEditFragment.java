@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
@@ -124,6 +125,13 @@ public class HabitEditFragment extends Fragment {
             DatabaseTask dbHelper = new DatabaseTask(v.getContext());
             dbHelper.addTask(name, deadline);
 
+            // navigate back to the habit list fragment
+            getParentFragmentManager().popBackStack();
+        });
+
+        // set up the navigation button
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> {
             // navigate back to the habit list fragment
             getParentFragmentManager().popBackStack();
         });

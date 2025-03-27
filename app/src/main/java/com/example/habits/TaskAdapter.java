@@ -55,27 +55,51 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.deleteButton.setVisibility(View.VISIBLE);
                 holder.archiveButton.setVisibility(View.VISIBLE);
 
+                holder.completeButton.setOnClickListener(v -> {
+                    dbTask.updateTaskStatus(task.getId(), 1);
+                    taskList.remove(position);
+                    notifyItemRemoved(position);
+
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                });
+
+                holder.editButton.setOnClickListener(v -> {
+
+                });
+
                 holder.deleteButton.setOnClickListener(v -> {
                     dbTask.updateTaskStatus(task.getId(), 3);
                     taskList.remove(position);
                     notifyItemRemoved(position);
 
-                    // show a snackbar message
-                    Snackbar snackbar = Snackbar.make(v, "Task deleted", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                });
+
+                holder.archiveButton.setOnClickListener(v -> {
+                    dbTask.updateTaskStatus(task.getId(), 2);
+                    taskList.remove(position);
+                    notifyItemRemoved(position);
+
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 });
                 break;
             case 1:
-                // task is completed
-                holder.restoreButton.setVisibility(View.VISIBLE);
-                break;
             case 2:
-                // task is archived
-                holder.restoreButton.setVisibility(View.VISIBLE);
-                break;
             case 3:
-                // task is trashed
+                // task is completed, archived, or trashed
                 holder.restoreButton.setVisibility(View.VISIBLE);
+
+                holder.restoreButton.setOnClickListener(v -> {
+                    dbTask.updateTaskStatus(task.getId(), 0);
+                    taskList.remove(position);
+                    notifyItemRemoved(position);
+
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been restored", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                });
                 break;
         }
 
