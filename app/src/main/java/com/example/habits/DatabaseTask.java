@@ -20,21 +20,17 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-       // Log.d(TAG, "Creating database...");
         db.execSQL("CREATE TABLE tasks ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "name TEXT NOT NULL, "
                 + "deadline TEXT, "
                 + "status INTEGER NOT NULL DEFAULT 0);");
-       // Log.d(TAG, "Database created successfully.");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-      //  Log.d(TAG, "Upgrading database...");
         db.execSQL("DROP TABLE IF EXISTS tasks");
         onCreate(db);
-      //  Log.d(TAG, "Database upgraded.");
     }
 
     public void addTask(String name, String deadline) {

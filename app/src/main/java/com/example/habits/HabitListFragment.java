@@ -36,9 +36,6 @@ public class HabitListFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
 
-    // ProgressBar progressBarTasks;
-    // TextView progressLabel;
-
     public HabitListFragment() {
         // Required empty public constructor
     }
@@ -125,9 +122,6 @@ public class HabitListFragment extends Fragment {
 
         updateTaskList(dbHelper, 0);
 
-        //     progressBarTasks = findViewById(R.id.progressBarTasks);
-        //     progressLabel = findViewById(R.id.progressLabel);
-
         Cursor cursor = dbHelper.getAllTasks();
         while (cursor.moveToNext()) {
             Log.d("Task", "ID: " + cursor.getInt(0) + " Name: " + cursor.getString(1));
@@ -137,10 +131,6 @@ public class HabitListFragment extends Fragment {
 
     private void updateTaskList(DatabaseTask dbHelper, int status) {
         List<Task> taskList = new ArrayList<>();
-
-        // menuTitle.setVisibility(View.VISIBLE);
-        // progressBarTasks.setVisibility(View.VISIBLE);
-        // progressLabel.setVisibility(View.VISIBLE);
 
         Cursor cursor;
         switch (status) {
@@ -227,84 +217,13 @@ public class HabitListFragment extends Fragment {
                 updateTaskList(dbHelper, 0);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-
-//                try {
-//
-                // Date date = sdf.parse(deadline);
-                // if (date != null) {
-                //     long triggerTime = date.getTime();
-
-                //     //long triggerTime = System.currentTimeMillis() + 10000; //Testing Purpose
-
-                //     Intent intent = new Intent(this, ReminderNotification.class);
-                //     intent.putExtra("taskName", taskName);
-
-                //     PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                //             this,
-                //             (int) System.currentTimeMillis(),
-                //             intent,
-                //             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                //     );
-
-                //     AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                //     alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-                // }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
             } else {
                 Toast.makeText(getContext(), "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // deadlineInput.setOnClickListener(v -> {
-        //     final Calendar calendar = Calendar.getInstance();
-
-        //     DatePickerDialog datePicker = new DatePickerDialog(this,
-        //             (view, year, month, dayOfMonth) -> {
-        //                 calendar.set(Calendar.YEAR, year);
-        //                 calendar.set(Calendar.MONTH, month);
-        //                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        //                 TimePickerDialog timePicker = new TimePickerDialog(this,
-        //                         (timeView, hourOfDay, minute) -> {
-        //                             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        //                             calendar.set(Calendar.MINUTE, minute);
-
-        //                             if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-        //                                 Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
-        //                                 return;
-        //                             }
-
-        //                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        //                             deadlineInput.setText(sdf.format(calendar.getTime()));
-        //                         },
-        //                         24, 0, true // Default 00:00 AM
-        //                 );
-
-        //                 if (isToday(calendar)) {
-        //                     Calendar now = Calendar.getInstance();
-        //                     timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
-        //                 }
-
-        //                 timePicker.show();
-        //             },
-        //             calendar.get(Calendar.YEAR),
-        //             calendar.get(Calendar.MONTH),
-        //             calendar.get(Calendar.DAY_OF_MONTH)
-        //     );
-        //     datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-        //     datePicker.show();
-
-        // });
-
-
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
-
-
     }
 
 
@@ -312,242 +231,5 @@ public class HabitListFragment extends Fragment {
         DatabaseTask dbHelper = new DatabaseTask(getContext());
         dbHelper.updateTaskStatus(taskId, newStatus, getContext());
         updateTaskList(dbHelper, 0);
-
-//                 DatabaseTask dbHelper = new DatabaseTask(this);
-//         dbHelper.updateTaskStatus(taskId, newStatus);
-//         displayTasks(dbHelper);
-
-// //       Chip chipCompleted = findViewById(R.id.chip2);
-// //       Chip chipArchived = findViewById(R.id.chip);
-// //       Chip chipTrash = findViewById(R.id.chipTrash);
-// //
-// //        if (chipCompleted.isChecked()) {
-// //            displayFilteredTasks(dbHelper, 1);
-// //        } else if (chipArchived.isChecked()) {
-// //            displayFilteredTasks(dbHelper, 2);
-// //        } else if (chipTrash.isChecked()) {
-// //            displayFilteredTasks(dbHelper, 3);
-// //        } else {
-// //            displayTasks(dbHelper);
-// //        }
-
-//         if (newStatus == 1 || newStatus == 2 || newStatus == 3) {
-//             Intent intent = new Intent(this, ReminderNotification.class);
-//             PendingIntent pendingIntent = PendingIntent.getBroadcast(
-//                     this,
-//                     taskId,
-//                     intent,
-//                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-//             );
-//             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//             if (alarmManager != null) {
-//                 alarmManager.cancel(pendingIntent);
-//             }
-//         }
-//         displayTasks(dbHelper);
     }
-
-    // public void editTaskDialog(Task task) {
-    //     DatabaseTask dbHelper = new DatabaseTask(this);
-
-    //     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    //     builder.setTitle("Edit Task");
-
-    //     LinearLayout layout = new LinearLayout(this);
-    //     layout.setOrientation(LinearLayout.VERTICAL);
-
-    //     final EditText taskInput = new EditText(this);
-    //     taskInput.setHint("Task Name");
-    //     taskInput.setText(task.getName());
-    //     layout.addView(taskInput);
-
-    //     EditText deadlineInput = new EditText(this); // not deadLineInput
-    //     deadlineInput.setHint("Select Date & Time");
-    //     deadlineInput.setFocusable(false);
-    //     deadlineInput.setClickable(true);
-    //     layout.addView(deadlineInput);
-
-    //     builder.setView(layout);
-
-    //     deadlineInput.setOnClickListener(v -> {
-    //         final Calendar calendar = Calendar.getInstance();
-
-    //         DatePickerDialog datePicker = new DatePickerDialog(this,
-    //                 (view, year, month, dayOfMonth) -> {
-    //                     calendar.set(Calendar.YEAR, year);
-    //                     calendar.set(Calendar.MONTH, month);
-    //                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-    //                     TimePickerDialog timePicker = new TimePickerDialog(this,
-    //                             (timeView, hourOfDay, minute) -> {
-    //                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-    //                                 calendar.set(Calendar.MINUTE, minute);
-
-    //                                 if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-    //                                     Toast.makeText(this, "⛔ Cannot select a past time!", Toast.LENGTH_SHORT).show();
-    //                                     return;
-    //                                 }
-
-    //                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-    //                                 deadlineInput.setText(sdf.format(calendar.getTime()));
-    //                             },
-    //                             9, 0, true // Default time: 9:00 AM
-    //                     );
-
-    //                     if (isToday(calendar)) {
-    //                         Calendar now = Calendar.getInstance();
-    //                         timePicker.updateTime(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
-    //                     }
-
-    //                     timePicker.show();
-    //                 },
-    //                 calendar.get(Calendar.YEAR),
-    //                 calendar.get(Calendar.MONTH),
-    //                 calendar.get(Calendar.DAY_OF_MONTH)
-    //         );
-
-    //         datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-    //         datePicker.show();
-    //     });
-
-
-    //     builder.setPositiveButton("Update", (dialog, which) -> {
-    //         String updatedName = taskInput.getText().toString();
-    //         String updatedDeadline = deadlineInput.getText().toString();
-    //         if (updatedDeadline.isEmpty()) {
-    //             Toast.makeText(this, "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
-    //             return;
-    //         }
-
-    //         dbHelper.updateTask(task.getId(), updatedName, updatedDeadline);
-    //         displayTasks(dbHelper);
-
-    //         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-    //         try {
-    //             Date date = sdf.parse(updatedDeadline);
-    //             if (date != null) {
-    //                 long triggerTime = date.getTime();
-
-    //                 Intent intent = new Intent(this, ReminderNotification.class);
-    //                 intent.putExtra("taskName", updatedName);
-
-    //                 PendingIntent pendingIntent = PendingIntent.getBroadcast(
-    //                         this,
-    //                         task.getId(), // same ID ensures replacement
-    //                         intent,
-    //                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-    //                 );
-
-    //                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-    //                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-    //                     if (alarmManager.canScheduleExactAlarms()) {
-    //                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-    //                     } else {
-    //                         Toast.makeText(this, "Exact alarms not permitted. Please allow in settings.", Toast.LENGTH_LONG).show();
-    //                     }
-    //                 }
-    //             }
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         }
-    //     });
-    //     builder.setNegativeButton("Cancel", null);
-    //     builder.show();
-//    }
-
-    //     private void displayTasks(DatabaseTask dbHelper) {
-    //     taskList.clear();
-    //     Cursor cursor = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE status = 0", null);
-
-    //     while (cursor.moveToNext()) {
-    //         int id = cursor.getInt(0);
-    //         String name = cursor.getString(1);
-    //         String deadline = cursor.getString(2);
-    //         int taskStatus = cursor.getInt(3);
-    //         taskList.add(new Task(id, name, deadline, taskStatus));
-    //     }
-
-    //     cursor.close();
-
-    //     int todayTotal = 0;
-    //     int todayCompleted = 0;
-    //     String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-    //     for (Task task : taskList) {
-    //         String deadline = task.getDeadline();
-    //         if (deadline != null && deadline.length() >= 10) {
-    //             String taskDate = deadline.substring(0, 10);
-    //             if (taskDate.equals(today)) {
-    //                 todayTotal++;
-    //                 if (task.getStatus() == 1) {
-    //                     todayCompleted++;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     if (todayTotal > 0) {
-    //         progressBarTasks.setVisibility(View.VISIBLE);
-    //         progressLabel.setVisibility(View.VISIBLE);
-    //         int percent = (int) (((double) todayCompleted / todayTotal) * 100);
-    //         progressBarTasks.setProgress(percent);
-    //         progressLabel.setText("📊 Today's Progress: " + todayCompleted + " / " + todayTotal);
-    //     } else {
-    //         progressBarTasks.setVisibility(View.GONE);
-    //         progressLabel.setVisibility(View.GONE);
-    //     }
-
-    //     if (adapter == null) {
-    //         adapter = new TaskAdapter(this, taskList);
-    //         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    //         recyclerView.setAdapter(adapter);
-    //     } else {
-    //         adapter.notifyDataSetChanged();
-    //     }
-    // }
-
-
-//    private boolean selectedDateIsToday(Calendar calendar) {
-//        Calendar today = Calendar.getInstance();
-//        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
-//                && today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
-//    }
-//
-//
-//    private boolean isToday(Calendar calendar) {
-//        Calendar today = Calendar.getInstance();
-//        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
-//                today.get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR);
-//    }
-//
-//    private void updateProgressBar(DatabaseTask dbHelper) {
-//        Cursor cursor = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE status = 0 OR status = 1", null);
-//        int todayTotal = 0;
-//        int todayCompleted = 0;
-//        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-//
-//        while (cursor.moveToNext()) {
-//            String deadline = cursor.getString(2);
-//            int status = cursor.getInt(3);
-//            if (deadline != null && deadline.length() >= 10) {
-//                String taskDate = deadline.substring(0, 10);
-//                if (taskDate.equals(today)) {
-//                    todayTotal++;
-//                    if (status == 1) todayCompleted++;
-//                }
-//            }
-//        }
-//        cursor.close();
-//
-//        if (todayTotal > 0) {
-//            int percent = (int) (((double) todayCompleted / todayTotal) * 100);
-//            progressBarTasks.setProgress(percent);
-//            progressLabel.setText("📊 Today's Progress: " + todayCompleted + " / " + todayTotal);
-//            progressBarTasks.setVisibility(View.VISIBLE);
-//            progressLabel.setVisibility(View.VISIBLE);
-//        } else {
-//            progressBarTasks.setVisibility(View.GONE);
-//            progressLabel.setVisibility(View.GONE);
-//        }
-//    }
 }

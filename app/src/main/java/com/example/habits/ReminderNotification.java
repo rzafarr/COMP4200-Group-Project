@@ -32,7 +32,5 @@ public class ReminderNotification extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
-        //Log.d("ReminderReceiver", "Notification Triggered: " + taskName);
-
     }
 }
