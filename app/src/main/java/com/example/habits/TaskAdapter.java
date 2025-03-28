@@ -21,8 +21,8 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> taskList;
 
-    private DatabaseTask dbHelper;
-    private Context context;
+    private final DatabaseTask dbHelper;
+    private final Context context;
 
     public TaskAdapter(Context context, List<Task> taskList) {
         this.taskList = taskList;

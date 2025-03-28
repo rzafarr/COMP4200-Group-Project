@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -40,13 +41,6 @@ public class HabitListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static HabitListFragment newInstance() {
-        HabitListFragment fragment = new HabitListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +53,7 @@ public class HabitListFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_habit_list, container, false);
     }
 
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // initialize variables
@@ -169,67 +163,9 @@ public class HabitListFragment extends Fragment {
         }
 
         if (adapter.getItemCount() == 0) {
-            getView().findViewById(R.id.emptyMessageText).setVisibility(View.VISIBLE);
+            requireView().findViewById(R.id.emptyMessageText).setVisibility(View.VISIBLE);
         } else {
-            getView().findViewById(R.id.emptyMessageText).setVisibility(View.GONE);
+            requireView().findViewById(R.id.emptyMessageText).setVisibility(View.GONE);
         }
-    }
-
-    @SuppressLint("ScheduleExactAlarm")
-    private void showAddTaskDialog(DatabaseTask dbHelper) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Add New Task");
-
-        EditText taskInput = new EditText(getContext());
-        taskInput.setHint("Enter Task Name");
-        taskInput.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        EditText deadlineInput = new EditText(getContext());
-        deadlineInput.setHint("Enter Date & Time (YYYY-MM-DD hh:mm)");
-        deadlineInput.setInputType(InputType.TYPE_CLASS_TEXT);
-        deadlineInput.setFocusable(false);
-        deadlineInput.setClickable(true);
-
-        LinearLayout layout = new LinearLayout(getContext());
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(taskInput);
-        layout.addView(deadlineInput);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String taskName = taskInput.getText().toString().trim();
-            String deadline = deadlineInput.getText().toString().trim();
-
-            Log.d("Task", "Task added: " + taskName);
-
-            if (deadline.isEmpty()) {
-                Toast.makeText(getContext(), "Please select a valid deadline!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (!taskName.isEmpty()) {
-                dbHelper.addTask(taskName, deadline);
-
-                Log.d("Task", "Task added: " + taskName);
-
-                Toast.makeText(getContext(), "Task Added!", Toast.LENGTH_SHORT).show();
-                updateTaskList(dbHelper, 0);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-            } else {
-                Toast.makeText(getContext(), "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-        builder.show();
-    }
-
-
-    public void updateTaskStatus(int taskId, int newStatus) {
-        DatabaseTask dbHelper = new DatabaseTask(getContext());
-        dbHelper.updateTaskStatus(taskId, newStatus, getContext());
-        updateTaskList(dbHelper, 0);
     }
 }

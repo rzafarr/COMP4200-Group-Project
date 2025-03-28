@@ -28,36 +28,24 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class HabitEditFragment extends Fragment {
-    private TaskAdapter adapter;
 
     public HabitEditFragment() {
         // Required empty public constructor
     }
 
-    public static HabitEditFragment newInstance() {
-        HabitEditFragment fragment = new HabitEditFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_habit_edit, container, false);
-
-        // return the inflated view
-        return view;
+        return inflater.inflate(R.layout.fragment_habit_edit, container, false);
     }
 
     @Override
@@ -67,11 +55,9 @@ public class HabitEditFragment extends Fragment {
 
         TextInputEditText titleEditText = view.findViewById(R.id.titleEditText);
         TextInputEditText dateEditText = view.findViewById(R.id.dateEditText);
-        int taskId = -1;
 
         // handle edit mode
         if (getArguments() != null) {
-            taskId = getArguments().getInt("taskId");
             String taskName = getArguments().getString("taskName");
             String taskDeadline = getArguments().getString("taskDeadline");
 
@@ -128,8 +114,8 @@ public class HabitEditFragment extends Fragment {
         Button submitButton = view.findViewById(R.id.submitButton);
 
         submitButton.setOnClickListener(v -> {
-            String name = titleEditText.getText().toString().trim();
-            String deadline = dateEditText.getText().toString().trim();
+            String name = Objects.requireNonNull(titleEditText.getText()).toString().trim();
+            String deadline = Objects.requireNonNull(dateEditText.getText()).toString().trim();
 
             // do some validation on the two fields
             if (name.isEmpty()) {
@@ -166,7 +152,7 @@ public class HabitEditFragment extends Fragment {
 
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-                    AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                    AlarmManager alarmManager = (AlarmManager) Objects.requireNonNull(getActivity()).getSystemService(ALARM_SERVICE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         if (alarmManager.canScheduleExactAlarms()) {
                             alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
