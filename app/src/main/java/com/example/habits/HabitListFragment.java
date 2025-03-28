@@ -177,6 +177,12 @@ public class HabitListFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.setAdapter(adapter);
         }
+
+        if (adapter.getItemCount() == 0) {
+            getView().findViewById(R.id.emptyMessageText).setVisibility(View.VISIBLE);
+        } else {
+            getView().findViewById(R.id.emptyMessageText).setVisibility(View.GONE);
+        }
     }
 
     @SuppressLint("ScheduleExactAlarm")
