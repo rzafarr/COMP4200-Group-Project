@@ -63,8 +63,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     dbTask.updateTaskStatus(task.getId(), 1);
                     taskList.remove(position);
                     notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, getItemCount());
 
-                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been completed.", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 });
 
@@ -91,8 +92,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     dbTask.updateTaskStatus(task.getId(), 3);
                     taskList.remove(position);
                     notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, getItemCount());
 
-                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted.", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 });
 
@@ -100,8 +102,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     dbTask.updateTaskStatus(task.getId(), 2);
                     taskList.remove(position);
                     notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, getItemCount());
 
-                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been deleted", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been archived.", Snackbar.LENGTH_LONG);
                     snackbar.show();
                 });
                 break;
@@ -115,6 +118,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     dbTask.updateTaskStatus(task.getId(), 0);
                     taskList.remove(position);
                     notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, getItemCount());
 
                     Snackbar snackbar = Snackbar.make(v, "Task '" + task.getName() + "' has been restored", Snackbar.LENGTH_LONG);
                     snackbar.show();
