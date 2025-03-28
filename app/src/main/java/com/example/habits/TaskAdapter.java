@@ -60,7 +60,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.archiveButton.setVisibility(View.VISIBLE);
 
                 holder.completeButton.setOnClickListener(v -> {
-                    dbTask.updateTaskStatus(task.getId(), 1);
+                    dbTask.updateTaskStatus(task.getId(), 1, v.getContext());
                     taskList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, getItemCount());
@@ -89,7 +89,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 });
 
                 holder.deleteButton.setOnClickListener(v -> {
-                    dbTask.updateTaskStatus(task.getId(), 3);
+                    dbTask.updateTaskStatus(task.getId(), 3, v.getContext());
                     taskList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, getItemCount());
@@ -99,7 +99,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 });
 
                 holder.archiveButton.setOnClickListener(v -> {
-                    dbTask.updateTaskStatus(task.getId(), 2);
+                    dbTask.updateTaskStatus(task.getId(), 2, v.getContext());
                     taskList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, getItemCount());
@@ -115,7 +115,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.restoreButton.setVisibility(View.VISIBLE);
 
                 holder.restoreButton.setOnClickListener(v -> {
-                    dbTask.updateTaskStatus(task.getId(), 0);
+                    dbTask.updateTaskStatus(task.getId(), 0, v.getContext());
                     taskList.remove(position);
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, getItemCount());
@@ -219,7 +219,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private void updateTaskStatus(int taskId, int newStatus) {
         taskList.get(taskId).setStatus(newStatus);
-        dbHelper.updateTaskStatus(taskId, newStatus);
+        dbHelper.updateTaskStatus(taskId, newStatus, context);
         notifyItemRemoved(taskId);
     }
 

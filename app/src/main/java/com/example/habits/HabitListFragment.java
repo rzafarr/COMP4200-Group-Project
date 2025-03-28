@@ -310,7 +310,7 @@ public class HabitListFragment extends Fragment {
 
     public void updateTaskStatus(int taskId, int newStatus) {
         DatabaseTask dbHelper = new DatabaseTask(getContext());
-        dbHelper.updateTaskStatus(taskId, newStatus);
+        dbHelper.updateTaskStatus(taskId, newStatus, getContext());
         updateTaskList(dbHelper, 0);
 
 //                 DatabaseTask dbHelper = new DatabaseTask(this);

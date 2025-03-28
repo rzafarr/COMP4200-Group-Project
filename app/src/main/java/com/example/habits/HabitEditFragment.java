@@ -1,9 +1,15 @@
 package com.example.habits;
 
+import static android.content.Context.ALARM_SERVICE;
 import static android.text.format.DateUtils.isToday;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +20,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 import java.util.Locale;
 
 public class HabitEditFragment extends Fragment {
@@ -57,6 +61,7 @@ public class HabitEditFragment extends Fragment {
     }
 
     @Override
+    @SuppressLint("ScheduleExactAlarm")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -126,6 +131,7 @@ public class HabitEditFragment extends Fragment {
             String name = titleEditText.getText().toString().trim();
             String deadline = dateEditText.getText().toString().trim();
 
+            // do some validation on the two fields
             if (name.isEmpty()) {
                 Toast.makeText(v.getContext(), "⛔ Please enter a habit name!", Toast.LENGTH_SHORT).show();
                 return;
@@ -136,14 +142,43 @@ public class HabitEditFragment extends Fragment {
                 return;
             }
 
+            // enter the task in the database
             DatabaseTask dbHelper = new DatabaseTask(v.getContext());
 
             if (getArguments() != null) {
                 dbHelper.updateTaskName(getArguments().getInt("taskId"), name);
                 dbHelper.updateTaskDeadline(getArguments().getInt("taskId"), deadline);
-            }
-            else {
+            } else {
                 dbHelper.addTask(name, deadline);
+            }
+
+            // schedule the reminder notification
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            try {
+                Date date = sdf.parse(deadline);
+                if (date != null) {
+                    long triggerTime = date.getTime();
+
+                    Intent intent = new Intent(getContext(), ReminderNotification.class);
+                    intent.putExtra("taskName", name);
+
+                    int id = dbHelper.getLastInsertedTaskId();
+
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+                    AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (alarmManager.canScheduleExactAlarms()) {
+                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+                        }
+                        else {
+                            Toast.makeText(getContext(), "Exact alarms not permitted. Please enable them in your device settings.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
 

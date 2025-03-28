@@ -1,6 +1,9 @@
 package com.example.habits;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -62,12 +65,22 @@ public class DatabaseTask extends SQLiteOpenHelper{
         return db.rawQuery("SELECT * FROM tasks WHERE status = 3", null);
     }
 
-    public void updateTaskStatus(int taskId, int status) {
+    public void updateTaskStatus(int taskId, int status, Context context) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("status", status);
         db.update("tasks", values, "_id=?", new String[]{String.valueOf(taskId)});
         db.close();
+
+        if (status == 1 || status == 2 || status == 3) {
+            // cancel existing alarm
+            Intent intent = new Intent(context, ReminderNotification.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, taskId, intent, PendingIntent.FLAG_UPDATE_CURRENT  | PendingIntent.FLAG_IMMUTABLE);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null) {
+                alarmManager.cancel(pendingIntent);
+            }
+        }
     }
 
     public void updateTaskName(int id, String name) {
@@ -90,7 +103,7 @@ public class DatabaseTask extends SQLiteOpenHelper{
 
     public int getLastInsertedTaskId() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM tasks", null);
+        Cursor cursor = db.rawQuery("SELECT MAX(_id) FROM tasks", null);
         int id = -1;
         if (cursor.moveToFirst()) {
             id = cursor.getInt(0);
