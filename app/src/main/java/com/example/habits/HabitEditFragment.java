@@ -62,6 +62,20 @@ public class HabitEditFragment extends Fragment {
 
         TextInputEditText titleEditText = view.findViewById(R.id.titleEditText);
         TextInputEditText dateEditText = view.findViewById(R.id.dateEditText);
+        int taskId = -1;
+
+        // handle edit mode
+        if (getArguments() != null) {
+            taskId = getArguments().getInt("taskId");
+            String taskName = getArguments().getString("taskName");
+            String taskDeadline = getArguments().getString("taskDeadline");
+
+            MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
+            toolbar.setTitle("Edit habit");
+
+            titleEditText.setText(taskName);
+            dateEditText.setText(taskDeadline);
+        }
 
         // set up the date picker
         dateEditText.setOnClickListener(v -> {
@@ -123,7 +137,15 @@ public class HabitEditFragment extends Fragment {
             }
 
             DatabaseTask dbHelper = new DatabaseTask(v.getContext());
-            dbHelper.addTask(name, deadline);
+
+            if (getArguments() != null) {
+                dbHelper.updateTaskName(getArguments().getInt("taskId"), name);
+                dbHelper.updateTaskDeadline(getArguments().getInt("taskId"), deadline);
+            }
+            else {
+                dbHelper.addTask(name, deadline);
+            }
+
 
             // navigate back to the habit list fragment
             getParentFragmentManager().popBackStack();

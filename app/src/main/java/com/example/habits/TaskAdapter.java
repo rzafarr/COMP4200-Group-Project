@@ -1,6 +1,7 @@
 package com.example.habits;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -65,7 +69,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 });
 
                 holder.editButton.setOnClickListener(v -> {
+                    // set up bundle params
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("taskId", task.getId());
+                    bundle.putString("taskName", task.getName());
+                    bundle.putString("taskDeadline", task.getDeadline());
 
+                    // pass bundle to HabitEditFragment
+                    HabitEditFragment habitEditFragment = new HabitEditFragment();
+                    habitEditFragment.setArguments(bundle);
+
+                    // go to HabitEditFragment
+                    FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.nav_host_fragment, habitEditFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
                 });
 
                 holder.deleteButton.setOnClickListener(v -> {
