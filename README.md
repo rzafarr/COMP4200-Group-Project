@@ -23,5 +23,6 @@ The app is fully functional with core features implemented and tested.
 Contributions
 
 Josiah - UI Design, Reminder System, Final Bug Fixes
+
 Roshna - Backend/Database, Data Filtering, Logic for Task Status
 
