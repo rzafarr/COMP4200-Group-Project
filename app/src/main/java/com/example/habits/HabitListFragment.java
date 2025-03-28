@@ -164,7 +164,6 @@ public class HabitListFragment extends Fragment {
             String deadline = cursor.getString(2);
             int taskStatus = cursor.getInt(3);
             taskList.add(new Task(id, name, deadline, taskStatus));
-            Log.d("Task", "ID: " + id + " Name: " + name);
         }
         cursor.close();
 

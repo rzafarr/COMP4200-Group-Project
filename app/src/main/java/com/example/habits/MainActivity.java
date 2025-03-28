@@ -28,16 +28,14 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigationView = findViewById(R.id.navigation);
         navigationView.setOnItemSelectedListener(item -> {
             navigationView.getMenu().findItem(R.id.item_1).setIcon(R.drawable.home_outline);
-            navigationView.getMenu().findItem(R.id.item_2).setIcon(R.drawable.settings_outline);
 
             switch (Objects.requireNonNull(item.getTitle()).toString()) {
                 case "Home":
                     item.setIcon(R.drawable.home_filled);
-                    navController.navigate(R.id.habitListFragment);
+                    navController.navigate(R.id.homeFragment);
                     break;
-                case "Settings":
-                    item.setIcon(R.drawable.settings_filled);
-                    navController.navigate(R.id.settingsFragment);
+                case "Habit List":
+                    navController.navigate(R.id.habitListFragment);
                     break;
             }
             return true;
